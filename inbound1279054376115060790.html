@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Surprise For You 😘</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0, #a8edea);
+            color: #fff;
+            text-align: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts */
+        .floating-heart {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0;
+            animation: floatHeart 7s linear infinite;
+            z-index: -1;
+        }
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Name Glow */
+        .glow-name {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #ff6b6b, #ffd93d, #37c8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            animation: glowPulse 2s ease-in-out infinite alternate;
+            margin: 20px auto;
+        }
+        @keyframes glowPulse {
+            from { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+            to { text-shadow: 0 0 30px rgba(255,255,255,0.9); }
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 0.8s ease-in-out;
+            z-index: 10;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        p {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.3s, background 0.3s;
+            z-index: 10;
+            position: relative;
+        }
+        button:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        /* Calendar Style */
+        .calendar {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px auto;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .calendar-date {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        #countdown-timer {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255,215,0,0.8);
+        }
+
+        .awesome {
+            font-size: 4rem;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+            color: #ffd93d;
+            text-shadow: 0 0 20px #fff;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Block Box */
+        #blockBox {
+            width: 200px;
+            height: 200px;
+            background: #333;
+            margin: 50px auto;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.5s;
+            z-index: 10;
+            position: relative;
+            overflow: hidden;
+        }
+        #blockBox:hover {
+            background: #ff6b6b;
+            transform: scale(1.1) rotate(5deg);
+        }
+        #blockBox::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        #blockBox:hover::after {
+            opacity: 1;
+            animation: ripple 0.6s linear;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* Final Heart */
+        .heart-3d-container {
+            margin: 20px auto;
+            width: 150px;
+            height: 150px;
+            perspective: 800px;
+        }
+        .heart-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: floatAndRotate 6s ease-in-out infinite;
+        }
+        .heart-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, #ff5e7a, #ff003c);
+            clip-path: path('M0.45,0.45 C0.45,-0.25 1.45,0.2 1.45,0.8 C1.45,1.8 0.75,2.2 0.45,2.8 C0.15,2.2 -0.55,1.8 -0.55,0.8 C-0.55,0.2 0.45,-0.25 0.45,0.45');
+            box-shadow: 0 0 30px rgba(255, 0, 60, 0.6);
+        }
+        .heart-front { transform: translateZ(5px); }
+        .heart-back {
+            transform: translateZ(-5px) rotateY(180deg);
+            background: radial-gradient(circle at 30% 30%, #ff7f8f, #ff305c);
+            opacity: 0.8;
+        }
+
+        /* Photo Frame */
+        .photo-frame {
+            width: 160px;
+            height: 160px;
+            border-radius: 20px;
+            margin: 20px auto;
+            border: 5px solid white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: floatPhoto 4s ease-in-out infinite;
+        }
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes floatPhoto {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Fireworks */
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: explode 1s forwards;
+            z-index: 999;
+        }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(80); opacity: 0; }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: fall 3s linear forwards;
+            z-index: 99;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .audio-controls {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Easter Egg Message */
+        #secretMessage {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            color: #ff6b6b;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 30px auto;
+            max-width: 90%;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: fadeIn 1s;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 600px;
+            overflow-y: auto;
+            max-height: 80vh;
+            text-align: center;
+        }
+
+        /* Countdown to Next Meetup */
+        .next-meet {
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: inline-block;
+        }
+
+        /* PHOTO GALLERY — Enhanced! */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 30px auto;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s;
+        }
+        .gallery-item.active img {
+            transform: scale(1.1);
+        }
+        .photo-date {
+            background: rgba(0,0,0,0.6);
+            color: #ffd93d;
+            padding: 5px;
+            font-size: 0.9rem;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border-radius: 5px;
+        }
+        .caption {
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 0 0 15px 15px;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CIRCULAR GIF SECTION */
+        .gif-section {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 30px auto;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .gif-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .gif-section:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Play Button for Audio */
+        #playButton {
+            background: #37c8ff;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        #playButton:hover {
+            background: #2aa8d3;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* SCROLLING LETTER STYLES */
+        .letter-container {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+        .scrolling-letter {
+            color: #000;
+            text-align: left;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatAndRotate {
+            0%, 100% { transform: translateY(0px) rotateY(0deg) rotateZ(0deg); }
+            25% { transform: translateY(-15px) rotateY(90deg) rotateZ(10deg); }
+            50% { transform: translateY(0px) rotateY(180deg) rotateZ(0deg); }
+            75% { transform: translateY(-15px) rotateY(270deg) rotateZ(-10deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND MUSIC - PLAYS THROUGHOUT -->
+    <audio id="bgMusic" loop>
+        <source src="S5.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- SCREEN 1 -->
+    <div class="screen active" id="screen1">
+        <h1>Hello Madam JI  💖</h1>
+        <p>Kaisi hai? AB apko hmari yaad nhi aati.To sochha hum hi yaad kar le.</p>
+        <p>Aapke liye ek chhota sa surprise hai.</p>
+
+        <!-- CIRCULAR GIF SECTION -->
+        <div class="gif-section">
+            <img src="https://i.imghippo.com/files/NRHq4006yRY.jpg" alt="Surprise!">
+        </div>
+
+        <button onclick="nextScreen(1)">💌 Here’s a surprise for you</button>
+    </div>
+
+    <!-- SCREEN 2 -->
+    <div class="screen" id="screen2">
+        <h1>Your gift is in waiting...</h1>
+        <div class="calendar">
+            <div class="calendar-date">📅 Today’s Date: <strong id="currentDate"></strong></div>
+        </div>
+        <div id="countdown-timer">5</div>
+        <p>The magic begins in just a few seconds…</p>
+
+        <!-- CIRCULAR GIF SECTION -->
+        <div class="gif-section">
+            <img src="https://i.imghippo.com/files/PsHy8929PrI.gif" alt="Loading Magic">
+        </div>
+    </div>
+
+    <!-- SCREEN 3 — PHOTO GALLERY (EXPANDED TO 6 IMAGES) -->
+    <div class="screen" id="screen3">
+        <h1>💞 KUCH YAADE SO MAINE SJO KAR RAKHI HAI.👉👈</h1>
+        <p>Kisi bhi photo pe click kijiye🙇🎀</p>
+
+        <div class="gallery">
+            <!-- IMAGE 1 -->
+            <div class="gallery-item" onclick="showCaption(1)">
+                <img src="https://i.imghippo.com/files/tHSw9353TWk.jpg" alt="Memory 1">
+                <div class="photo-date">🗓OCT 7, 2024</div>
+                <div id="caption1" class="caption">Your first pic i saved secretly and admire you silently💝👀</div>
+            </div>
+
+            <!-- IMAGE 2 -->
+            <div class="gallery-item" onclick="showCaption(2)">
+                <img src="https://i.imghippo.com/files/vT5015gxc.jpg" alt="Memory 2">
+                <div class="photo-date">🗓DEC 3, 2024</div>
+                <div id="caption2" class="caption">Your first appearance in sari or wo chhoti si bindi.. Haaye..😭(us din meri hi nzar lag jati🥺🧿).</div>
+            </div>
+
+            <!-- IMAGE 3 -->
+            <div class="gallery-item" onclick="showCaption(3)">
+                <img src="https://i.imghippo.com/files/mJ7522r.jpg" alt="Memory 3">
+                <div class="photo-date">🗓️ New Year’s Eve ❤️</div>
+                <div id="caption3" class="caption">The first thing given by you, when we were together🏵️ Us raat der se neend lagi🌹.</div>
+            </div>
+
+            <!-- IMAGE 4 -->
+            <div class="gallery-item" onclick="showCaption(4)">
+                <img src="https://i.imghippo.com/files/OTem9004cs.jpg" alt="Memory 4">
+                <div class="photo-date">🗓JAN 22, 2025</div>
+                <div id="caption4" class="caption">One of the saddest moment/day of my life. The fear of not seeing you again🙇.But you made me believe that you will be always with me💞💝 .</div>
+            </div>
+
+            <!-- IMAGE 5 -->
+            <div class="gallery-item" onclick="showCaption(5)">
+                <img src="https://i.imghippo.com/files/jOeu2689aDI.jpg" alt="Memory 5">
+                <div class="photo-date">🗓MARCH 14,2025</div>
+                <div id="caption5" class="caption">The first thing given by me🤌.. That was also not too good.🤦 I don't know weather u have kept it or thrown it🫠🙍</div>
+            </div>
+
+            <!-- IMAGE 6 -->
+            <div class="gallery-item" onclick="showCaption(6)">
+                <img src="https://i.imghippo.com/files/KmN4053Jk.jpg" alt="Memory 6">
+                <div class="photo-date">🗓FEB 18, 2023</div>
+                <div id="caption6" class="caption">Apki smile smile ke kya hi kehne.. Kisko dekh ke pyaar nhi aayega is smile se💕🫶</div>
+            </div>
+            
+            <div class="gallery-item" onclick="showCaption(7)">
+                <img src="https://i.imghippo.com/files/fyIr7797U.jpg" alt="Memory 7">
+                <div class="photo-date">🗓FEB 18, 2023</div>
+                <div id="caption7" class="caption">Bachho ke sath khud bhi bachi ban jane wali aap.. Hamesh mere liye ek masum or pyari ladki rhogi..💞💝</div>
+            </div>
+            <div class="gallery-item" onclick="showCaption(8)">
+                <img src="https://i.imghippo.com/files/VmZm1727NSM.jpg" alt="Memory 8">
+                <div class="photo-date">🗓FEB 18, 2023</div>
+                <div id="caption8" class="caption">My laat happiest moment was with this picture🫠. After this i never founded  the way you use to be with me🙂. </div>
+            </div>
+        </div>
+
+        <button onclick="nextScreen(3)" style="margin-top: 40px;">👉 Kaisa hai? ABHI OR BHI HAI😸🙌 "CLICK HERE"</button>
+    </div>
+
+    <!-- SCREEN 4 -->
+    <div class="screen" id="screen4">
+        <div class="awesome🤪😜 ">GUSSA N HOIYE 😜 </div>
+        <p>ACHHA KAR RHI HAI.. AAGE BADHTE RAHIYE</p>
+        <p>BAS PAHUCH HI GAYE🤪</p>
+
+        <!-- CIRCULAR GIF SECTION -->
+        <div class="gif-section">
+            <img src="https://i.imghippo.com/files/UuA6627a.gif" alt="Excited!">
+        </div>
+
+        <button onclick="nextScreen(4)">🎁 Keep Going</button>
+    </div>
+
+    <!-- SCREEN 5 -->
+    <div class="screen" id="screen5">
+        <h1>🔐 Last Stage hai.. INTEZZAR KHATAM HUA😸👻 🔐</h1>
+        <p>So... here is the final surprise.. Guess kijiye kya hoga? </p>
+        <div id="blockBox" onclick="revealBox()"> Koi baat nhi yha click kar ke khud dekh lijiye✨👉👈🌸</div>
+
+        <!-- CIRCULAR GIF SECTION -->
+        <div class="gif-section">
+            <img src="https://i.imghippo.com/files/Cnut2680Ofs.gif" alt="Mystery Box">
+        </div>
+    </div>
+
+    <!-- SCREEN 6 - FINAL SURPRISE -->
+    <div class="screen" id="screen6" onclick="handleTap()">
+        <div class="glow-name">DEAR BHUTKI🎀(MADAM JI)</div>
+
+        <div style="display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap;">
+            <!-- 3D HEART -->
+            <div class="heart-3d-container">
+                <div class="heart-3d">
+                    <div class="heart-side heart-front"></div>
+                    <div class="heart-side heart-back"></div>
+                </div>
+            </div>
+
+            <!-- PHOTO -->
+            <div class="photo-frame">
+                <img src="https://i.imghippo.com/files/JSUw4633RW.png" alt="Us">
+            </div>
+        </div>
+
+        <p>No matter the distance, my love finds you. Always.</p>
+        <p>Today is YOUR day. And I’m celebrating you — with all my heart.</p>
+
+        <!-- SCROLLING LETTER CONTAINER -->
+        <div class="letter-container">
+            <div class="scrolling-letter">
+                <p>Hey... Kaisi ho.. ? Jane do jwab dene ka koi faida nhi .. mai n ab tumhari life se n jaa rha hu.. mujhe lagta hai maine bahut pareshan kiya hai tumko .. tumko time chahiye n tum lelo.. jitna time lena hai tum lo.. lekin jo tum ye bin btaye chali jati ho n.. din bhar tum online nhi aati to Chinta khaye jati hai mujhko... Mujhe bahut fikar hone lagti hai tumhari... Lekin tumko shayad uski koi khabar nhi hoti ki tumhare online n aane se kisi ko kitna fikar hoti hai.. isliye tumne bina btaye hi insta delete kar diya or jab aai to bhi seen kar ke..msg nhi kiya.. isse tumhari life me meri value pta chalti hai.. janti ho maine jaan bujh kar tumko msg nhi kiya mai dekhna chahta tha ki tum kab msg karogi.. maine to tumko usi waqt online dekha tha jab tumne mere msg 1 mint seen pe chhoda tha.. maine socha dekh rhi hogi mere bheje hue reels msg.. to reply dene me late hogi.. lekin tumne reply nhi diya🫠.. or ab 35ghante bit gaye.. isse pta chalta hai tumhare liye mera pyaar koi mayne nhi rakhta....<br>
+                        My favorite dream.<br>
+                              Tumhare liye tumhara ego/ self respect mayne rakhta hai.. lekin tumne apna self respect barkaraar rakha... Yaad hai ek waqt tha tumne hi kha tha ki jab maine usko birthday wish Kiya tha to tumne bola tha ki apni self respect jaruri hoti hai. Or maine bola tha ki pyar or dosti me self respect ki koi jagah nhi hoti.. lekin shayad mai galat tha.. meri life me to hai.. lekin mai ye bhool gya tha ki dusro ki life me unke liye kya mayne hai..  khair jaane do.. tumko waqt chahiye to le lo.. mai nhi aaunga tumko disturb karne..  mujhe tumhari photos ko dekh tumhare diye gaye letters ko padh .. tumhare favourite gane sun ke mai din gujarna manjur hai lekin meri expectations se khud ko roj roj   hurt karna bilkul manzoor nhi.. maine jab dekha tumne msg seen kar ke bhi reply nhi Diya to mai kya samjhu.. tum bas mere se isliye baat ki kyuki tumko lga ki mai depression me hu..  see mai jaisa bhi hu thik bekar.. mere pass agr aao to purani wali ya to dost ya fir meri bhutki banke aana..
+Ye hamdardi jante ke liye maat aaya karna.. mujhe sabse jyada bura hamdardi jtane walo se lagta hai.. mai ab jaa rha hu to ab iska koi mtlb to nhi Banta but still maine ye kha .. or ha tumko boards tak ka time chahiye tha maine diya.. tumahara board ke baad mai fir ek baar aaunga and uske baad tumhara jo decision hoga wo mera final hoga.. kyuki tum to bin btaye chali jaati ho pareshan mai hota hu tumko lekar.. or ab roj roj ye soch kar ki aab tumhare msg aaye ga ab ayega lekin msg nhi aata .. ab mai apni roj roj ankhe nam nhi kar sakta .. it's better ki mai yha se Chala jau.. kam se kaam is loop me fasa rahunga ki tum khush ho.. apne padhai pe focus kar rhi hogi.. jo bhi ek wajah tha wo bhi ab nhi rha.. tumne apne letter me likha tha ki kabhi bhi kisi pe burden nhi samjhu.. dekho aaj mai tumpe hi burden baan gya hu.. lekin ab or nhi.. maaf karna.. mujhe maine bahut jhel liya ,so pls.. ab or nhi sha jaa rha.. mai tumhara intezar kar lunga jaise 4 mahine nikal gaye waise hi 8 mhine
+AB MERI NOTIFICATION LIST ME TUMHARE ALAWA OR KOI MSG NHI HOGA.. AGR HOGA TO SIRF TUMAHRA NHI TO KISI KA BHI NHI....TAB TAK KE LIYE MAI TUMHARE BHAGWAN JI SE YEHI PRATHNA KARUNGA KI WO TUMKO HAMESHA KHUSH RAKHE.. UNKI KRIPA TUMNE SDA BNI RHE.. TUMKO HIMMAT DE TUMHARI PROBLEM SE LADNE KE LIYE✨🙌.. I LOVE U 🥹💖      ॐ नमो भगवते वासुदेवाय नमः 🪷ki meri BHUTKI KA KHYAL RAKHNA 🧿💫.. 
+AAJ akhri baar....
+ Good night ✨,,
+Sweet dreams 💫
+GOOD BYE 🥺</p>
+            </div>
+        </div>
+
+        <div class="audio-controls">
+            <p>🎧 I recorded this just for you… press play:</p>
+            <audio id="personalMessage">
+                <source src="s1.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <!-- Play Button for Audio -->
+            <button id="playButton" onclick="playAudio()">▶️ Play My Message</button>
+        </div>
+
+        <div id="secretMessage">
+             Shhhuuu🤫 .. EK AAKHRI SURPRISE.. Kahi bhi 5 bar tap kijiye🙌🫶...
+        </div>
+
+        <p style="margin-top: 30px; font-size: 1.4rem;">
+            I love you more than yesterday… but less than tomorrow. 😘💖
+        </p>
+
+        <!-- CIRCULAR GIF SECTION -->
+        <div class="gif-section">
+            <img src="https://i.imghippo.com/files/uft5421Ho.gif" alt="Love You!">
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 1;
+        let tapCount = 0;
+
+        // Show current date
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        function nextScreen(from) {
+            document.getElementById(`screen${from}`).classList.remove('active');
+            document.getElementById(`screen${from + 1}`).classList.add('active');
+            currentScreen = from + 1;
+
+            // Start background music on first real step
+            if (from === 1 && currentScreen === 2) {
+                const bgMusic = document.getElementById('bgMusic');
+                bgMusic.volume = 0.2; // Soft background volume
+                bgMusic.play().catch(e => {
+                    // If blocked by browser, ask user to tap
+                    document.body.addEventListener('click', () => {
+                        bgMusic.play();
+                    }, { once: true });
+                });
+            }
+
+            if (currentScreen === 2) {
+                createFloatingHearts();
+                startCountdownTimer();
+            } else if (currentScreen === 3) {
+                // Gentle confetti
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        createConfetti();
+                    }, i * 100);
+                }
+            } else if (currentScreen === 6) {
+                // Do NOT call showSecretHint here - it will trigger after voice message ends
+            }
+        }
+
+        function startCountdownTimer() {
+            let count = 5;
+            const timerEl = document.getElementById('countdown-timer');
+            const interval = setInterval(() => {
+                count--;
+                timerEl.innerText = count;
+                if (count <= 0) {
+                    clearInterval(interval);
+                    nextScreen(2); // Directly transition without delay
+                }
+            }, 1000);
+        }
+
+        function revealBox() {
+            const box = document.getElementById('blockBox');
+            box.innerHTML = "💝";
+            box.style.background = "#ff6b6b";
+            box.style.transform = "scale(1.5) rotate(720deg)";
+setTimeout(() => {
+                nextScreen(5);
+            }, 800);
+        }
+
+        function launchFireworks() {
+            // Fade out background music
+            const bgMusic = document.getElementById('bgMusic');
+            let vol = bgMusic.volume;
+            const fade = setInterval(() => {
+                vol -= 0.05;
+                if (vol <= 0.05) {
+                    clearInterval(fade);
+                    bgMusic.volume = 0.05;
+                } else {
+                    bgMusic.volume = vol;
+                }
+            }, 100);
+
+            // Launch fireworks/confetti
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => createFirework(), i * 100);
+            }
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => createConfetti(), i * 30);
+            }
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        }
+
+        function playAudio() {
+            const audio = document.getElementById('personalMessage');
+            audio.play();
+            launchFireworks();
+        }
+
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+            firework.style.left = Math.random() * 100 + 'vw';
+            firework.style.top = Math.random() * 100 + 'vh';
+firework.style.backgroundColor = ['#ff6b6b', '#ffd93d', '#37c8ff', '#a8edea'][Math.floor(Math.random() * 4)];
+            document.body.appendChild(firework);
+            setTimeout(() => firework.remove(), 1000);
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = ['#ff6b6b', '#feca57', '#1dd1a1', '#ff9ff3', '#54a0ff'][Math.floor(Math.random() * 5)];
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+
+        function createFloatingHearts() {
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('floating-heart');
+                    heart.innerHTML = ['❤️', '💕', '💖', '💗'][Math.floor(Math.random() * 4)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDelay = Math.random() * 5 + 's';
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 7000);
+                }, i * 250);
+            }
+        }
+
+        function showSecretHint() {
+            const secretMessage = document.getElementById('secretMessage');
+            secretMessage.style.display = 'block';
+            secretMessage.style.top = '0';
+            secretMessage.style.transform = 'translateX(-50%)';
+        }
+
+        function handleTap() {
+            if (currentScreen !== 6) return;
+tapCount++;
+            if (tapCount >= 5) {
+                tapCount = 0;
+                revealSecretMessage();
+            }
+        }
+
+        function revealSecretMessage() {
+            const secretDiv = document.createElement('div');
+            secretDiv.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: white;
+                    color: #ff6b6b;
+                    padding: 30px;
+                    border-radius: 25px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                    z-index: 9999;
+                    max-width: 90%;
+                    text-align: center;
+                    animation: fadeIn 0.5s;
+                ">
+                    <h2>💌 My Secret to You 💌</h2>
+                    <p style="font-size: 1.3rem; margin: 20px 0;">
+                        Even when we’re apart, you’re my favorite thought.<br>
+                        My favorite dream.<br>
+                        My favorite person to miss.<br><br>
+                        I’m counting every second until I see you again.<br>
+                        And when I do?<br>
+                        First: Hug. Second: Kiss. Third: Never letting go.<br><br>
+                        I love you beyond words, beyond distance, beyond time.<br>
+                        Forever yours.
+                    </p>
+                    <button onclick="this.parentElement.remove()" style="
+                        background: #ff6b6b;
+                        color: white;
+                        border: none;
+padding: 12px 30px;
+                        border-radius: 50px;
+                        font-size: 1.1rem;
+                        cursor: pointer;
+                        margin-top: 20px;
+                    ">Close</button>
+                </div>
+            `;
+            document.body.appendChild(secretDiv);
+        }
+
+        // Show caption + zoom + heart burst
+        function showCaption(num) {
+            // Reset all
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.caption').forEach(el => el.style.display = 'none');
+
+            // Show selected caption
+            const item = document.querySelector(`.gallery-item:nth-child(${num})`);
+            const caption = document.getElementById(`caption${num}`);
+
+            if (item && caption) {
+                item.classList.add('active');
+
+                // Create heart burst at tap position
+                const rect = item.getBoundingClientRect();
+                const heart = document.createElement('div');
+                heart.classList.add('heart-burst');
+                heart.innerHTML = '💖';
+                heart.style.left = (rect.left + rect.width/2) + 'px';
+                heart.style.top = (rect.top + rect.height/2) + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 800);
+
+                // Show caption
+                caption.style.display = 'block';
+                caption.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+// Auto-hide after 8 seconds (optional)
+                setTimeout(() => {
+                    caption.style.display = 'none';
+                    item.classList.remove('active');
+                }, 8000);
+            }
+        }
+
+        // Trigger secret message after voice message ends
+        document.getElementById('personalMessage').addEventListener('ended', showSecretHint);
+    </script>
+
+</body>
+</html>
